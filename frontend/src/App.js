@@ -1,5 +1,9 @@
+import Button from "./components/Button";
+
 function App() {
-  return <div>Hello</div>;
+  return <div>
+    <Button />
+  </div>;
 }
 
 export default App;
