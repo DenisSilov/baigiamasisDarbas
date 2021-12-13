@@ -1,43 +1,63 @@
 import React, { useState } from 'react';
-import useFetch from '../hooks/useFetch';
+import axios from 'axios';
+import AllMembersList from './AllMembersList';
 
 const MembersForm = () => {
   // -- state
-
-  const [name_surname, setName_surname] = useState('');
-  const [email, setEmail] = useState('');
-  const [age, setAge] = useState(0);
-  const [memberData, setMemberData] = useState([]);
-  const [method, setMethod] = useState('');
-
-  const [loading, data, error] = useFetch("members",method, null, memberData);
-
-  // Functios
-  function submitHandler(e) {
-    e.preventDefault();
-    const member = {
-      name_surname: name_surname,
-      email: email,
-      age: +age,
-    };
-    setMethod('POST');
-    setMemberData(member);
+  const [name, setName] = useState("")
+  const [surname, setSurname] = useState("")
+  const [email, setEmail] = useState("")
+  const [age, setAge] = useState("")
+  const [showMessage, setShowMessage] = useState("")
+  const [data, setData] = useState("")
+  
+  
+// Functios
+  const submitHandler = (e) => {
+    e.preventDefault()
+    axios
+      .post("http://localhost:5000/api/members", {
+        name: name,
+        surname: surname,
+        email: email,
+        age: age,
+      })
+      .then(
+        (response) => {
+          console.log(response.data)
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
+      setName("")
+    setSurname("")
+    setEmail("")
+    setAge("")
+    setShowMessage(true)
+    setData("")
   }
 
-  return loading ? (
-    <p>Loading...</p>
-  ) : error ? (
-    <p>{error}</p>
-  ) : (
-    <>
-      <form onSubmit={submitHandler}>
+  return  (
+<div>
+      <form onSubmit={submitHandler} >
         <div>
-          <label htmlFor='name_surname'>Name and Surname</label>
+          <label htmlFor='name'>Name</label>
           <br />
           <input
             type='text'
-            value={name_surname}
-            onChange={(e) => setName_surname(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label htmlFor='surname'>Surname</label>
+          <br />
+          <input
+            type='text'
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
           />
         </div>
 
@@ -55,7 +75,7 @@ const MembersForm = () => {
           <label htmlFor='age'>Age</label>
           <br />
           <input
-            type='age'
+            type='number'
             value={age}
             onChange={(e) => setAge(e.target.value)}
           />
@@ -65,8 +85,16 @@ const MembersForm = () => {
           <input type='submit' value='Register' />
         </div>
       </form>
-    </>
+      <div>
+     {showMessage &&  <p>{data.message}</p>}
+
+      </div>
+<br />
+      <AllMembersList />
+      </div>
   );
+  
 };
+
 
 export default MembersForm;
